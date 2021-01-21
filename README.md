@@ -1,18 +1,13 @@
-# Puppeteer Standalone (PPTaaS)
+# Puppeteer as a Service (PPTaaS)
 A simple Express server designed to return a PDF either via an URL or an HTML Body using Puppeteer.
 
 ## Install and run
-Either build and run the Docker via :
+
+Build and run the Docker via :
 
 ```bash
 docker build -t pptaas .
-docker run pptaas --name pptaas
-```
-Or, if you have NodeJS on your machine : 
-
-```bash
-npm i
-npm start
+docker run --name pptaas -p 8080:8080 pptaas 
 ```
 
 ## Precautions regarding Puppeteer

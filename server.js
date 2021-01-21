@@ -12,13 +12,16 @@ const HOST = '0.0.0.0';
 
 // App
 const app = express();
+process.on('SIGINT', function() {
+    console.log('\nShutting down server.');
+    process.exit();
+});
 
 const bodyParserOptions = {
     inflate: true,
     limit: '20mb',
     type: '*/*'
 };
-
 app.use(bodyParser.raw(bodyParserOptions))
 
 app.get('/', (req, res) => {
