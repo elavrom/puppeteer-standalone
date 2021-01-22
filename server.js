@@ -25,6 +25,13 @@ const bodyParserOptions = {
 app.use(bodyParser.raw(bodyParserOptions))
 
 app.get('/', (req, res) => {
+    let url;
+    url = req.query.url;
+
+    if (undefined !== url) {
+        return getPdf(url).then(pdfPath => sendFile(res, pdfPath));
+    }
+
     handleNoData(res);
 });
 
@@ -57,7 +64,7 @@ console.log(`Running on http://${HOST}:${PORT}`);
 
 function handleNoData(res) {
     res.status(400);
-    res.send('You should send some data. Either pass an URL in the ?url query param, or send an HTML body in your request.');
+    res.send('You should send some data. Either pass an URL in the ?url query param, or send a POST request with an HTML body in your request (Content-Type header required).');
 }
 
 function sendFile(res, pdfPath) {
@@ -88,8 +95,10 @@ async function getPdf(urlOrBody, fromBody = false) {
                 urlOrBody = null;
             }
         });
+        console.log('Got a body');
         id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
     } else {
+        console.log('Got an URL : ' + urlOrBody);
         id = urlOrBody.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gim);
     }
     const pdfPath = '/tmp/ptr-' + id + '.pdf';
@@ -105,6 +114,7 @@ async function getPdf(urlOrBody, fromBody = false) {
         fs.unlinkSync(tempBodyFile);
     }
 
+    /* Test de suppression automatique des temps: useless si on reboot le container de manière périodique
     (() => {
         fs.readdir('/tmp', function(err, filenames) {
             if (err) {
@@ -121,7 +131,7 @@ async function getPdf(urlOrBody, fromBody = false) {
                 });
             });
         });
-    })();
+    })();*/
 
     return pdfPath;
 }
